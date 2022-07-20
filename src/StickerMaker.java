@@ -11,7 +11,7 @@ public class StickerMaker {
 
   private static final double MULT_FACTOR = 0.2;
 
-  public void cria(InputStream inputStream, String nomeArquivo) throws Exception {
+  public void cria(InputStream inputStream, String nomeArquivo, String rank) throws Exception {
 
     BufferedImage imagemOriginal = ImageIO.read(inputStream);
 
@@ -32,7 +32,7 @@ public class StickerMaker {
     graphics.setFont(fonte);
 
     // Escrever uma frase na nova imagem
-    graphics.drawString("TOPZERA", 10, novaAltura - 10);
+    graphics.drawString("Rank: " + rank, 20, novaAltura - 10);
 
     // Escrever a nova imagem em um arquivo
     ImageIO.write(novaImagem, "png", new File("assets/img/" + nomeArquivo));

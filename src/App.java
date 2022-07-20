@@ -32,11 +32,11 @@ public class App {
 
             String urlImagem = filme.get("image");
             String titulo = filme.get("title");
+            String rank = filme.get("rank");
 
             InputStream inputStream = new URL(urlImagem).openStream();
             String nomeArquivo = titulo + ".png";
-
-            maker.cria(inputStream, nomeArquivo);
+            maker.cria(inputStream, nomeArquivo, rank);
 
             System.out.println(titulo);
             System.out.println(filme.get("imDbRating"));
