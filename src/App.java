@@ -1,45 +1,36 @@
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
-import java.util.Map;
 
 public class App {
     public static void main(String[] args) throws Exception {
 
-        // Fazer uma conexão HTTP e buscar os top 250 filmes
+        // Extratores
 
-        String url = "https://alura-filmes.herokuapp.com/conteudos";
-        URI endereco = URI.create(url);
-        var client = HttpClient.newHttpClient();
-        var request = HttpRequest.newBuilder(endereco).GET().build();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-        String body = response.body();
+        // String url = "https://alura-filmes.herokuapp.com/conteudos";
+        // ExtratorConteudo extrator = new ExtratorConteudoIMDB();
 
-        // Extrair os dados que interessam (título, poster, classificação)
+        String url = "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&start_date=2022-06-15&end_date=2022-06-19";
+        ExtratorConteudo extrator = new ExtratorConteudoNasa();
 
-        var parser = new JsonParser();
-        List<Map<String, String>> listaDeFilmes = parser.parse(body);
+        var http = new ClienteHttp();
+        String json = http.buscaDados(url);
 
         // Exibir e manipular os dados
 
+        List<Conteudo> conteudos = extrator.extraiConteudos(json);
+
         var maker = new StickerMaker();
-        for (Map<String, String> filme : listaDeFilmes) {
+        for (int i = 0; i < 3; i++) {
 
-            String urlImagem = filme.get("image");
-            String titulo = filme.get("title");
-            String rank = filme.get("rank");
+            Conteudo conteudo = conteudos.get(i);
 
-            InputStream inputStream = new URL(urlImagem).openStream();
-            String nomeArquivo = titulo + ".png";
-            maker.cria(inputStream, nomeArquivo, rank);
+            InputStream inputStream = new URL(conteudo.getUrlImagem()).openStream();
+            String nomeArquivo = "stickers/" + conteudo.getTitulo() + ".png";
+            maker.cria(inputStream, nomeArquivo);
 
-            System.out.println(titulo);
-            System.out.println(filme.get("imDbRating"));
+            System.out.println(conteudo.getTitulo());
+            System.out.println();
         }
 
     }
